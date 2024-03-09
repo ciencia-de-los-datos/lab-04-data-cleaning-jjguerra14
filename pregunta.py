@@ -8,29 +8,22 @@ correctamente. Tenga en cuenta datos faltantes y duplicados.
 """
 import nltk
 import pandas as pd
-nltk.download('wordnet')
-from nltk.stem import WordNetLemmatizer
-
-
 def clean_data():
 
-    df = pd.read_csv("solicitudes_credito.csv", sep=";",
-                     thousands=None,  # separador de miles para números
-                     decimal=".",  # separador de decimales
-                     )
-    df=df.copy()
-    df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x) #limpiar espacios en blancos
-    df = df.applymap(lambda x: x.lower() if isinstance(x, str) else x) # Convertir todos los datos a minúsculas
-    df=df.drop_duplicates() #elimiar duplicados
-    df=df.dropna()#eliminar filas vacias
-    df.monto_del_credito=df.monto_del_credito.str.strip("$") #eliminar simbologia
-    df.monto_del_credito=df.monto_del_credito.replace({',':''},regex=True).apply(pd.to_numeric) 
-                  # para quitar el separador decimal y, a continuación, utiliza pd.to_numeric() 
-                 #para convertir las columnas a tipo numérico. El resultado se muestra en la consola.
-    df.comuna_ciudadano=df.comuna_ciudadano.astype(int)
-    df = df.sort_values(by=["monto_del_credito"], ascending   =[False])
-    lemmatizer = WordNetLemmatizer()
-    df['sexo'] = df['sexo'].apply(lambda x: ' '.join([lemmatizer.lemmatize(word) for word in x.split()])) #lematización
+    df = pd.read_csv("solicitudes_credito.csv", sep=";")
+    df=df.copy()  
+    df["sexo"]=df["sexo"].str.strip() # me borra espacios en blanco inicio-final
+    df["sexo"]=df["sexo"].str.lower() # Reemplazar todo por minuscula
+    df["sexo"]=df["sexo"].str.replace("_","") # Reemplazar todo por minuscula
+    df["sexo"]=df["sexo"].str.lower() # Reemplazar todo por minuscula
+    df["sexo"] = df["sexo"].str.translate(
+        str.maketrans("", "", "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")) # revisar notas al respecto
+    df["sexo"]=df["sexo"].str.split()
+    stemmer = nltk.PorterStemmer()
+    df["sexo"] = df["sexo"].apply(lambda x: [stemmer.stem(word) for word in x])
+    df["sexo"] = df["sexo"].apply(lambda x: sorted(set(x)))  # set un conjunto que no se repiten elementos
+    # sorted ordena 
+    df["sexo"]=df["sexo"].str.join(" ") # me uno los dos strings de la lista.
 
     return df
 
