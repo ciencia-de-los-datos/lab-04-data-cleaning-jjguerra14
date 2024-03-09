@@ -8,6 +8,8 @@ correctamente. Tenga en cuenta datos faltantes y duplicados.
 """
 import nltk
 import pandas as pd
+nltk.download('wordnet')
+from nltk.stem import WordNetLemmatizer
 
 
 def clean_data():
@@ -26,6 +28,10 @@ def clean_data():
                   # para quitar el separador decimal y, a continuación, utiliza pd.to_numeric() 
                  #para convertir las columnas a tipo numérico. El resultado se muestra en la consola.
     df.comuna_ciudadano=df.comuna_ciudadano.astype(int)
+    df = df.sort_values(by=["monto_del_credito"], ascending   =[False])
+    lemmatizer = WordNetLemmatizer()
+    df['sexo'] = df['sexo'].apply(lambda x: ' '.join([lemmatizer.lemmatize(word) for word in x.split()])) #lematización
+
     return df
 
 print(clean_data())
