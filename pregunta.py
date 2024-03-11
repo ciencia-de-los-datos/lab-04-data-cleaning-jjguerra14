@@ -5,7 +5,6 @@ correctamente. Tenga en cuenta datos faltantes y duplicados.
 
 """
 import re
-from unidecode import unidecode
 from datetime import datetime
 import pandas as pd
 def clean_data():
@@ -29,7 +28,6 @@ def clean_data():
    
 
     df["barrio"] = df["barrio"].str.lower().replace("antonio nari¿o", "antonio nari¿o").replace('bel¿n', "belen")
-    df["barrio"] = df["barrio"].apply(lambda x: unidecode(x))
     df["barrio"] =[fila.replace("-", " ").replace("_", " ").replace(". ", ".") for fila in df["barrio"]]
     df["barrio"] = df["barrio"].str.strip()
 
@@ -79,8 +77,8 @@ def clean_data():
 
 
 
-    #kw='belén'
-    #df = df[df['barrio'].isin([kw])] #dejar solo los datos con esa palabra clave
+    #kw='agropecuaria'
+    #df = df[df['tipo_de_emprendimiento'].isin([kw])] #dejar solo los datos con esa palabra clave
 
     #kw=['mantenimiento-en-','mantenimiento-en-','distribuidora-de-','lavadero-de-','publicidad_y_','publicidad-y-','mantenimiento en ','publicidad y ','almacen_de_ropa_en_','distribuidora_de_'
     #     'organización_y_','venta de ','fabrica de ','fabrica-de-','deposito de ','almacen de ropa en ','fabrica_de_','lenceria para el ','lavadero de ','deposito_de_',
@@ -89,9 +87,9 @@ def clean_data():
     # d1=(set(df["idea_negocio"].to_list()))
     # lista=list(df["idea_negocio"].value_counts())
 
-   #df=df.drop_duplicates()
-    #return set(list(df["barrio"]))
-    return df["barrio"].value_counts()
+    df=df.drop_duplicates()
+    return df["sexo"].value_counts()
+    #return df
 
    
 
